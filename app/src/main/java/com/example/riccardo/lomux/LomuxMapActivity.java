@@ -654,14 +654,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         closePinFragment();
 
-        selected_pin = "";
         if (youtube_over) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
           youtube_over = false;
           }
 
-        selected_pin = -1;
+        selected_pin = "";
 
     }
 
