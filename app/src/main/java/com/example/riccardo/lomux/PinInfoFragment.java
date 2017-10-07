@@ -229,7 +229,7 @@ public class PinInfoFragment extends Fragment {
 
         //TODO fare funzionare colore
 
-
+        // per committ a caso
 
         arrow_button.setOnClickListener(new ArrowClickListener(arg_lng, arg_lat));
 
