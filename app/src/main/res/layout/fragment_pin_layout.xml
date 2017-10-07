@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pin_fragment_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/pin_fragment_layout_linear_layout_for_title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15"
+        android:background="#22264b">
+        <TextView
+            android:id="@+id/pin_fragment_layout_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:text="Pin Name"
+            android:paddingLeft="5dp"
+            android:textColor="#e8edf3"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/pin_fragment_layout_title_image"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:padding="5dp"
+            android:src="@drawable/icon_sample_for_title_layout"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/pin_fragment_layout_inner_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.8"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/pin_fragment_layout_inner_left_vertical_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pin_fragment_layout_textview_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.07"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Subtitle"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pin_fragment_layout_textview_artists"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.07"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Additional info like artist or itinerary"
+                android:textStyle="bold"
+                android:textSize="12sp" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                    android:id="@+id/pin_fragment_layout_textview_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="Info.............................."
+                    android:textSize="12sp" />
+
+
+                    <LinearLayout
+                        android:id="@+id/pin_fragment_layout_linearlayout_for_source"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.1">
+
+                        <TextView
+                            android:id="@+id/pin_fragment_layout_source_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="Source:"
+                            android:textStyle="italic"
+                            android:textSize="12sp" />
+
+
+                        <TextView
+                            android:id="@+id/pin_fragment_layout_textview_formore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingRight="5dp"
+                            android:text="For More..."
+                            android:maxLines="1"
+                            android:textSize="12sp" />
+
+                    </LinearLayout></LinearLayout>
+
+
+            </ScrollView>
+
+            <TextView
+                android:id="@+id/pin_fragment_layout_textview_address"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.07"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Address"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pin_fragment_layout_inner_right_vertical_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.35"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/pin_fragment_layout_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:padding="5dp"
+                android:src="@drawable/info_pin_placeholder" />
+
+
+
+            <LinearLayout
+                android:id="@+id/pin_fragment_layout_button_horizontal_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/imagebutton_arrow_directions"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/arrow_directions_blue"/>
+
+
+
+                <ImageButton
+                    android:id="@+id/imagebutton_play"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="3dp"
+                    android:src="@drawable/play_button_blue" />
+
+
+                <ImageButton
+                    android:id="@+id/imagebutton_share"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="3dp"
+                    android:src="@drawable/share_button_blue" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

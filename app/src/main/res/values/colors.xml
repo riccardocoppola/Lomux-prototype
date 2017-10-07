@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1a237e</color>
+    <color name="colorPrimaryDark">#22264b</color>
+    <color name="colorAccent">#e6cf8b</color>
+    <color name="colorMonument">#000000</color>
+    <color name="colorPrivate">#f16645</color>
+    <color name="colorStudio">#4cc3d9</color>
+    <color name="colorWork">#ffc65d</color>
+    <color name="colorLOTM">#93648e</color>
+    <color name="colorVenue">#7bc8a4</color>
+
+</resources>

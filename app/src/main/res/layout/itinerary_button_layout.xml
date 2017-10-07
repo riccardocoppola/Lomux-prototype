@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp"
+    android:layout_marginTop="5dp"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/itinerary_button_image"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.5"
+        android:background="@null"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/cast_ic_stop_circle_filled_grey600" />
+
+    <TextView
+        android:id="@+id/itinerary_button_text"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.5"
+        android:gravity="center_vertical"
+        android:text="NomeIt."
+        android:textAlignment="center"
+        android:textSize="10sp" />
+</LinearLayout>
