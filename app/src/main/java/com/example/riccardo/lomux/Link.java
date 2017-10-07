@@ -7,19 +7,19 @@ import android.net.Uri;
 
 public class Link {
     private String value;
-    private Uri href;
+    private String href;
 
     public Link(String text, String href)
     {
         value = text;
-        this.href = Uri.parse(href);
+        this.href = href;
     }
 
     public String getText(){
         return value;
     }
 
-    public Uri getUri(){
+    public String getUri(){
         return href;
     }
 

@@ -25,6 +25,7 @@ public class PinInfoFragment extends Fragment {
     final static String ARG_ADDRESS = "firstline";
     final static String ARG_ARTISTS = "secondline";
     final static String ARG_INFO = "info";
+    final static String ARG_SOURCE_NAME = "sourcename";
     final static String ARG_SOURCE = "source";
     final static String ARG_IMAGE = "image_ref";
     final static String ARG_LNG = "longitude";
