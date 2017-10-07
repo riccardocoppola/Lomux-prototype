@@ -129,23 +129,23 @@ public class PinInfoFragment extends Fragment {
         artists_textview.setText(args.getString(PinInfoFragment.ARG_ARTISTS));
         info.setText(args.getString(PinInfoFragment.ARG_INFO));
 
-        if (args.getString(PinInfoFragment.ARG_SOURCE).compareTo("-") == 0 || args.getString(PinInfoFragment.ARG_SOURCE).trim().compareTo("") == 0) {
+        if (args.getString(PinInfoFragment.ARG_SOURCE_NAME).compareTo("-") == 0 || args.getString(PinInfoFragment.ARG_SOURCE_NAME).trim().compareTo("") == 0) {
             source_label.setText("");
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=0.0f;
-            Log.d("sourcehide", "hide" + " " + args.getString(PinInfoFragment.ARG_SOURCE));
+            Log.d("sourcehide", "hide" + " " + args.getString(PinInfoFragment.ARG_SOURCE_NAME));
             source_layout.setLayoutParams(lp);
         }
         else {
             source_label.setText("Source: ");
-            formore.setText(args.getString(PinInfoFragment.ARG_SOURCE));
+            formore.setText(args.getString(PinInfoFragment.ARG_SOURCE_NAME));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=0.1f;
-            Log.d("sourcehide", "not hide" + " " + args.getString(PinInfoFragment.ARG_SOURCE));
+            Log.d("sourcehide", "not hide" + " " + args.getString(PinInfoFragment.ARG_SOURCE_NAME));
             source_layout.setLayoutParams(lp);
         }
 
-        formore.setText(args.getString(PinInfoFragment.ARG_SOURCE));
+        formore.setText(args.getString(PinInfoFragment.ARG_SOURCE_NAME));
         subtitle_textview.setText(args.getString(PinInfoFragment.ARG_SUBTITLE));
 
         String pin_type = args.getString(PinInfoFragment.ARG_TYPE);

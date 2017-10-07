@@ -218,7 +218,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                     Log.d("Pin", "No media sources available");
                 }
 
-                String photos_present = row[13]; // sure?
+                String photos_present = row[14];
 
                 if (photos_present.compareTo("yes") == 0) {
 
@@ -528,6 +528,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             args.putString(PinInfoFragment.ARG_SUBTITLE, pin.getSubtitle());
             args.putInt(PinInfoFragment.ARG_IMAGE, pin.getImage_reference());
             args.putString(PinInfoFragment.ARG_TYPE, pin.getPintype().toString());
+
 
             Log.d("stringpin", String.valueOf(pin.getImage_reference()));
 
