@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, ClusterManager.OnClusterClickListener<Pin>, ClusterManager.OnClusterItemClickListener<Pin>, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener {
+public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, ClusterManager.OnClusterClickListener<Pin>, ClusterManager.OnClusterItemClickListener<Pin>, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener, PinInfoFragment.OnYoutubeClickListener, YoutubeFragment.OnYoutubeBackListener {
 
     private Integer current_textview_id = -1;
 
@@ -50,6 +50,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private String selected_itinerary = "All Pins";
     private String selected_pin = "";
+    private Pin current_pin = null;
 
     private HashMap<Marker, Pin> markerPinHashMap = new HashMap<Marker, Pin>();
     private HashMap<String, Pin> pinSet = null;
@@ -62,6 +63,49 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private ClusterManager<Pin> mClusterManager;
 
+    private boolean youtube_over = false;
+
+
+
+    @Override
+    public void onYoutubeClick() {
+
+
+
+
+
+        YoutubeFragment  yf = new YoutubeFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.lomux_map_fragment_frame, yf, "youtube").commit();
+
+        youtube_over = true;
+
+        ArrayList<Link> current_medialist = current_pin.getMediaList();
+
+        String video_id = "GW3enefjwY0";
+
+        for (Link l:current_medialist) {
+            if (l.getText().toLowerCase().equals("youtube")) {
+                String[] fields = l.getUri().split("=");
+                video_id = fields[fields.length-1];
+            }
+        }
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        yf.setVideoID(video_id);
+
+    }
+
+    @Override
+    public void onYoutubeBack() {
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+
+        youtube_over = false;
+    }
 
     public static int getResId(String resName, Class<?> c) {
 
@@ -506,6 +550,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(pin.getLat(), pin.getLng())));
 
         selected_pin = pin.getId();
+        current_pin = pin;
 
         if (pinInfoFragment == null) {
 
@@ -532,7 +577,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.lomux_map_fragment_frame, pinInfoFragment).commit();
+                    .add(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
 
             FrameLayout fragment_frame = (FrameLayout) findViewById(R.id.lomux_map_fragment_frame);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
@@ -544,6 +589,12 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         else  if (!shownFragment) {
+
+            if (youtube_over) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+                youtube_over = false;
+            }
 
             FrameLayout fragment_frame = (FrameLayout) findViewById(R.id.lomux_map_fragment_frame);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
@@ -559,6 +610,16 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         else {
+
+            if (youtube_over) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+
+                youtube_over = false;
+            }
+
+            getSupportFragmentManager().executePendingTransactions();
+
             pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
             pinInfoFragment.reset_buttons();
 
@@ -597,6 +658,12 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void onMapClick(LatLng point) {
 
         closePinFragment();
+
+        if (youtube_over) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+          youtube_over = false;
+          }
 
         selected_pin = "";
 
