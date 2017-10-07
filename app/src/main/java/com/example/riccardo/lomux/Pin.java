@@ -1,5 +1,8 @@
 package com.example.riccardo.lomux;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,10 +11,10 @@ import java.util.ArrayList;
  */
 
 
-public class Pin implements Serializable {
+public class Pin implements Serializable, ClusterItem {
 
     //mandatory attributes
-    protected int id;
+    protected String id;
     protected PinType pintype;                  //discrimination between three different types of pin
 
 
@@ -44,7 +47,7 @@ public class Pin implements Serializable {
                     //possibly define later an STUDIO as a class, to filter out all pins related to the same artist
     protected String song_title = null;           //mandatory for WORK pins, name of the song (or album)
     protected String song_lyrics = null;          //optional for WORK pins, lyrics of the song related to the place
-
+    protected ArrayList<Link> mediaList = null;     // list of URIs to open Youtube or Spotify to reproduce media
 
   //  protected Marker marker = null;             //the pin is connected to the marker that is then shown in the map, when
                                                  //the marker is created from the application
@@ -55,7 +58,7 @@ public class Pin implements Serializable {
 
 
 
-    public Pin(int id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
+    public Pin(String id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
         this.id = id;
         this.pintype = pintype;
         this.lat = lat;
@@ -94,7 +97,7 @@ public class Pin implements Serializable {
         return itineraries;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -155,7 +158,7 @@ public class Pin implements Serializable {
     }
 
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -245,5 +248,33 @@ public class Pin implements Serializable {
 
     public void setImage_reference(int image_reference) {
         this.image_reference = image_reference;
+    }
+
+    public void addMedia(String type, String URI) {
+        if (mediaList == null)
+            mediaList = new ArrayList<>();
+
+        mediaList.add(new Link(type, URI));
+    }
+
+    public ArrayList<Link> getMediaList()
+    {
+        return mediaList;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        LatLng result = new LatLng(this.lat, this.lng);
+        return result;
+    }
+
+    @Override
+    public String getTitle() {
+        return this.getName();
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
     }
 }
