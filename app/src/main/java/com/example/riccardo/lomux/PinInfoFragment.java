@@ -44,7 +44,8 @@ public class PinInfoFragment extends Fragment {
     private TextView source_label;
     private ImageView pin_fragment_image;
     private int image_reference;
-    private String href = null;
+    private Link sourceLink = null;
+
 
     private ImageButton arrow_button;
 

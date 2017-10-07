@@ -204,8 +204,21 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                         row[15],    //Song title
                         row[16]     //lyrics
                         );
+                // now on row[17] and row[18] we have media type (Youtube, Spotify for now) and their URI
+                // we extract them here
+                try {
+                    String[] medias = row[17].split(",");
+                    String[] mediaUri = row[18].split(",");
+                    for (int ii = 0; ii < medias.length; ii++) {
+                        currentPin.addMedia(medias[ii], mediaUri[ii]);
+                    }
+                } catch (ArrayIndexOutOfBoundsException ex )
+                {
+                    // no media sources found
+                    Log.d("Pin", "No media sources available");
+                }
 
-                String photos_present = row[13];
+                String photos_present = row[13]; // sure?
 
                 if (photos_present.compareTo("yes") == 0) {
 
