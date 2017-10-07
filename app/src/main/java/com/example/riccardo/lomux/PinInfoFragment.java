@@ -182,18 +182,11 @@ public class PinInfoFragment extends Fragment {
         @Override
         public void onClick(View v)
         {
-            Intent intent = new Intent(Intent.ACTION_SEND);
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 
-            // Always use string resources for UI text.
-            // This says something like "Share this photo with"
-            String title = getResources().getString(R.string.chooser_title);
-            // Create intent to show chooser
-            Intent chooser = Intent.createChooser(intent, title);
-
-            // Verify the intent will resolve to at least one activity
-            Log.d("sharebutton", "Trying to launch chooser");
-            if (intent.resolveActivity(pm) != null)
-            startActivity(chooser);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "TEXT TO SEND");
+            startActivity(Intent.createChooser(sharingIntent, "Send message via:"));
 
         }
     };
