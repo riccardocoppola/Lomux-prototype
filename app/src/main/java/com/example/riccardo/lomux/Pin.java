@@ -1,5 +1,8 @@
 package com.example.riccardo.lomux;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,7 +11,7 @@ import java.util.ArrayList;
  */
 
 
-public class Pin implements Serializable {
+public class Pin implements Serializable, ClusterItem {
 
     //mandatory attributes
     protected String id;
@@ -257,5 +260,21 @@ public class Pin implements Serializable {
     public ArrayList<Link> getMediaList()
     {
         return mediaList;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        LatLng result = new LatLng(this.lat, this.lng);
+        return result;
+    }
+
+    @Override
+    public String getTitle() {
+        return this.getName();
+    }
+
+    @Override
+    public String getSnippet() {
+        return null;
     }
 }

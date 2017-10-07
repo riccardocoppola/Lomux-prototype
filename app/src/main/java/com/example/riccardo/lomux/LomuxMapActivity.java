@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,6 +57,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     private LinearLayoutManager mLinearLayoutManager;
 
     private RecyclerAdapter mAdapter;
+
+    private ClusterManager<Pin> mClusterManager;
 
 
     public static int getResId(String resName, Class<?> c) {
@@ -506,6 +509,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(london_center));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(camerazoom));
+
+        mClusterManager = new ClusterManager<Pin>(this, mMap);
 
         placeAllPins();
 
