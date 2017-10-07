@@ -30,12 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<Pin>, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener {
+public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, ClusterManager.OnClusterClickListener<Pin>, ClusterManager.OnClusterItemClickListener<Pin>, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener {
 
     private Integer current_textview_id = -1;
 
@@ -278,27 +277,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void placePin(String id) {
         Pin p = pinSet.get(id);
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
-        switch (p.getPintype()) {
-            case VENUE:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_v));
-                break;
-            case STUDIO:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_r));
-                break;
-            case WORK:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_w));
-                break;
-            case PRIVATE:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_p));
-                break;
-            case MONUMENT:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_m));
-                break;
-            default:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
-        }
-        markerPinHashMap.put(marker, p);
+        mClusterManager.addItem(p);
         //p.setMarker(marker);
         p.setVisible();
     }
@@ -335,7 +314,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void placeAllPins() {
         removeAllPins();
-        DefaultClusterRenderer<Pin> dcr;
         ArrayList<PinType> icons = new ArrayList<>();
         for (Pin p: pinSet.values()) {
            // Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
@@ -367,36 +345,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
            // p.setMarker(marker);*/
             p.setVisible();
         }
-        int ii = 0;
-        PinType cur;
-        for (Marker marker : mClusterManager.getMarkerCollection().getMarkers())
-        {
-            cur = icons.get(ii);
-            switch (cur)
-            {
-                case VENUE:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_v));
-                    break;
-                case STUDIO:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_r));
-                    break;
-                case WORK:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_w));
-                    break;
-                case PRIVATE:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_p));
-                    break;
-                case MONUMENT:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_m));
-                    break;
-                default:
-                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
-            }
-            mClusterManager.onMarkerClick(marker);
-            ii++;
-        }
-
-
     }
 
 
@@ -408,14 +356,15 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 final RecyclerAdapter.ItineraryHolder holder = (RecyclerAdapter.ItineraryHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
                 holder.hideItinerary();
             }
-
-            if (itinerary.getID().equals("")) {
+            Log.d("itinerary", "Itenerary ID: " + itinerary.getID());
+            if (itinerary.getID().equals("0")) {
                 placeAllPins();
                 selected_itinerary = itinerary.getName();
             } else {
                 placeItineraryPins(itinerary.getID());
                 selected_itinerary = itinerary.getName();
             }
+            mClusterManager.cluster();
             closePinFragment();
 
         }
@@ -445,9 +394,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                 Bundle resultBundle = data.getExtras();
                 Pin resultPin = (Pin) resultBundle.get("pin");
-
-
-
                 placeOnMarker(resultPin);
 
             }
@@ -660,6 +606,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public boolean onClusterItemClick(Pin pin) {
         Log.d("marker", "marker pressed");
+        placeOnMarker(pin);
         return true;
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster) {
+        Log.d("marker", "marker cluster pressed");
+        return false;
     }
 }
