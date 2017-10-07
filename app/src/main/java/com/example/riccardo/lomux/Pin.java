@@ -254,4 +254,8 @@ public class Pin implements Serializable {
         mediaList.add(new Link(type, URI));
     }
 
+    public ArrayList<Link> getMediaList()
+    {
+        return mediaList;
+    }
 }

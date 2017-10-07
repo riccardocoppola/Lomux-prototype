@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import java.util.ArrayList;
 
 /**
  * Created by Riccardo on 31/08/2017.
@@ -32,6 +33,7 @@ public class PinInfoFragment extends Fragment {
     final static String ARG_LAT = "latitude";
     final static String ARG_SUBTITLE = "subtitle";
     final static String ARG_TYPE = "type";
+    final static String ARG_MEDIALIST = "media_list";
 
     View rootView;
 
@@ -105,6 +107,9 @@ public class PinInfoFragment extends Fragment {
     public void onStart() {
         super.onStart();
     }
+
+
+    //TODO updatepinview
 
     public void updatePinView() {
 
@@ -204,7 +209,7 @@ public class PinInfoFragment extends Fragment {
 
     }
 
-    public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type) {
+    public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type, ArrayList<Link> media_list) {
 
 
         LinearLayout source_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linearlayout_for_source);

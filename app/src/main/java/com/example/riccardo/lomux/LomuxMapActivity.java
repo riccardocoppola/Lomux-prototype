@@ -528,6 +528,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             args.putString(PinInfoFragment.ARG_SUBTITLE, pin.getSubtitle());
             args.putInt(PinInfoFragment.ARG_IMAGE, pin.getImage_reference());
             args.putString(PinInfoFragment.ARG_TYPE, pin.getPintype().toString());
+            args.putSerializable(PinInfoFragment.ARG_MEDIALIST, pin.getMediaList());
 
 
             Log.d("stringpin", String.valueOf(pin.getImage_reference()));
@@ -561,13 +562,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             fragment_frame.setLayoutParams(lp);
 
 
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
 
             shownFragment = true;
         }
 
         else {
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
 
         }
 
