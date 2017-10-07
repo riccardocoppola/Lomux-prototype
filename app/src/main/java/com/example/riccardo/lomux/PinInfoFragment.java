@@ -156,6 +156,33 @@ public class PinInfoFragment extends Fragment {
 
     };
 
+    public class ShareListener implements View.OnClickListener
+    {
+
+        private double lng;
+        private double lat;
+
+        public ShareListener(double lng, double lat) {
+            this.lng = lng;
+            this.lat = lat;
+            Log.d("Directions", "created listener");
+        }
+
+        @Override
+        public void onClick(View v)
+        {
+            // TO DO load image
+            //Uri imageUri = Uri.parse("android.resource://" + getPackageName()+ "/drawable/" + "ic_launcher");
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, "Hello");
+         //   intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+            intent.setType("image/*");
+            startActivity(intent);
+
+        }
+    };
+
 
 
     @Override
