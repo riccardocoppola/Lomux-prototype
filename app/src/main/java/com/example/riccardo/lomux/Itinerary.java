@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 public class Itinerary implements Serializable {
 
 
-    private int ID;
+    private String ID;
     private String name;
     private String info;
     private Image image;
@@ -26,9 +26,9 @@ public class Itinerary implements Serializable {
     private int image_circle_reference;    //only at the beginning in which images are loaded in res folders
 
 
-    private LinkedHashMap<Integer, Pin> pins = new LinkedHashMap<Integer, Pin>();
+    private LinkedHashMap<String, Pin> pins = new LinkedHashMap<String, Pin>();
 
-    public Itinerary(int id, String name, String info, Image image) {
+    public Itinerary(String id, String name, String info, Image image) {
         this.ID = id;
         this.name = name;
         this.info = info;
@@ -38,7 +38,7 @@ public class Itinerary implements Serializable {
         this.image_circle_reference = -1;
     }
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
@@ -46,7 +46,7 @@ public class Itinerary implements Serializable {
         return name;
     }
 
-    public void setID(int ID) {
+    public void setID(String ID) {
         this.ID = ID;
     }
 
@@ -62,7 +62,7 @@ public class Itinerary implements Serializable {
         return pins.get(id);
     }
 
-    public LinkedHashMap<Integer, Pin> getPins() {
+    public LinkedHashMap<String, Pin> getPins() {
         return pins;
     }
 

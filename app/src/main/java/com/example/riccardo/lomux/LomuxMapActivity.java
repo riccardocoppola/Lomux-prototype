@@ -46,10 +46,10 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Boolean shownFragment = false;
 
     private String selected_itinerary = "All Pins";
-    private int selected_pin = -1;
+    private String selected_pin = null;
 
     private HashMap<Marker, Pin> markerPinHashMap = new HashMap<Marker, Pin>();
-    private HashMap<Integer, Pin> pinSet = null;
+    private HashMap<String, Pin> pinSet = null;
     private TextView pinStuff = null;
 
     private RecyclerView mRecyclerView;
@@ -70,19 +70,19 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-    private LinkedHashMap<Integer, Itinerary> itineraries = null;
+    private LinkedHashMap<String, Itinerary> itineraries = null;
 
 
-    private LinkedHashMap<Integer, Itinerary> itineraryReader() {
-        LinkedHashMap<Integer, Itinerary> itineraries = new LinkedHashMap<Integer, Itinerary>();
+    private LinkedHashMap<String, Itinerary> itineraryReader() {
+        LinkedHashMap<String, Itinerary> itineraries = new LinkedHashMap<String, Itinerary>();
         InputStream inputStream = getResources().openRawResource(R.raw.lomux_itineraries);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
 
-        Itinerary allpinsitinerary = new Itinerary(0, "All Pins", "All pins of current city", null);
+        Itinerary allpinsitinerary = new Itinerary("", "All Pins", "All pins of current city", null);
         allpinsitinerary.setImage_reference(getApplicationContext().getResources().getIdentifier("it0square", "drawable", getApplicationContext().getPackageName()));
         allpinsitinerary.setImage_circle_reference(getApplicationContext().getResources().getIdentifier("it0circle", "drawable", getApplicationContext().getPackageName()));
-        itineraries.put(0, allpinsitinerary);
+        itineraries.put("", allpinsitinerary);
 
 
 
@@ -97,7 +97,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                 String[] row = csvLine.split(";");
 
-                int number = Integer.parseInt(row[0]);
+                String number = row[0];
                 String name = row[1];
                 String info = row[2];
 
@@ -151,8 +151,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         return itineraries;
     }
 
-    private HashMap<Integer, Pin> pinReader() {
-        HashMap<Integer, Pin> pinSet = new HashMap<Integer, Pin>();
+    private HashMap<String, Pin> pinReader() {
+        HashMap<String, Pin> pinSet = new HashMap<String, Pin>();
         InputStream inputStream = getResources().openRawResource(R.raw.lomux_data);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
@@ -176,7 +176,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 else if (row[1].compareTo("M") == 0) pinType = PinType.MONUMENT;
                 else pinType = PinType.LOTM;
 
-                int number = Integer.parseInt(row[0]);
+                String number = row[0];
                 double lat = Double.parseDouble(row[2].replaceAll(",","."));
                 double lng = Double.parseDouble(row[3].replaceAll(",","."));
 
@@ -262,7 +262,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    private void placePin(int id) {
+    private void placePin(String id) {
         Pin p = pinSet.get(id);
         Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
         switch (p.getPintype()) {
@@ -289,12 +289,12 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         p.setVisible();
     }
 
-    private void removePin(int id) {
+    private void removePin(String id) {
 
         Marker toRemove = null;
 
         for (Map.Entry<Marker, Pin> m: markerPinHashMap.entrySet()) {
-            if (m.getValue().getId() == id) {
+            if (m.getValue().getId().equals(id)) {
                 Log.d("Found pin", m.getValue().getName());
                 toRemove = m.getKey();
                 toRemove.remove();
@@ -319,11 +319,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    private void placeItineraryPins(int id) {
+    private void placeItineraryPins(String id) {
         Itinerary currentItinerary = itineraries.get(id);
-        HashMap<Integer, Pin> itineraryPins = currentItinerary.getPins();
+        HashMap<String, Pin> itineraryPins = currentItinerary.getPins();
         removeAllPins();
-        for (HashMap.Entry<Integer, Pin> p: itineraryPins.entrySet()) {
+        for (HashMap.Entry<String, Pin> p: itineraryPins.entrySet()) {
             placePin(p.getKey());
         }
     }
@@ -369,7 +369,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 holder.hideItinerary();
             }
 
-            if (itinerary.getID() == 0) {
+            if (itinerary.getID().equals("")) {
                 placeAllPins();
                 selected_itinerary = itinerary.getName();
             } else {
@@ -606,7 +606,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         closePinFragment();
 
-        selected_pin = -1;
+        selected_pin = null;
 
     }
 

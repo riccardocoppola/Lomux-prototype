@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Pin implements Serializable {
 
     //mandatory attributes
-    protected int id;
+    protected String id;
     protected PinType pintype;                  //discrimination between three different types of pin
 
 
@@ -55,7 +55,7 @@ public class Pin implements Serializable {
 
 
 
-    public Pin(int id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
+    public Pin(String id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
         this.id = id;
         this.pintype = pintype;
         this.lat = lat;
@@ -94,7 +94,7 @@ public class Pin implements Serializable {
         return itineraries;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -155,7 +155,7 @@ public class Pin implements Serializable {
     }
 
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
