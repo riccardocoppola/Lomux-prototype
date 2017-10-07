@@ -510,7 +510,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             args.putString(PinInfoFragment.ARG_ADDRESS, pin.getAddress());
             args.putString(PinInfoFragment.ARG_ARTISTS, pin.getArtist_name());
             args.putString(PinInfoFragment.ARG_INFO, pin.getInfo());
-            args.putString(PinInfoFragment.ARG_SOURCE, pin.getSource());
+            args.putString(PinInfoFragment.ARG_SOURCE_NAME, pin.getSource().getText());
+            args.putString(PinInfoFragment.ARG_SOURCE, pin.getSource().getUri());
             args.putString(PinInfoFragment.ARG_SUBTITLE, pin.getSubtitle());
             args.putInt(PinInfoFragment.ARG_IMAGE, pin.getImage_reference());
             args.putString(PinInfoFragment.ARG_TYPE, pin.getPintype().toString());
