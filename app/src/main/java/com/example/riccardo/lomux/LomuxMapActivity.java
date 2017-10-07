@@ -47,6 +47,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private String selected_itinerary = "All Pins";
     private String selected_pin = "";
+    private Pin current_pin = null;
 
     private HashMap<Marker, Pin> markerPinHashMap = new HashMap<Marker, Pin>();
     private HashMap<String, Pin> pinSet = null;
@@ -65,12 +66,30 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     public void onYoutubeClick() {
 
 
+
+
+
         YoutubeFragment  yf = new YoutubeFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.lomux_map_fragment_frame, yf, "youtube").commit();
 
         youtube_over = true;
+
+        ArrayList<Link> current_medialist = current_pin.getMediaList();
+
+        String video_id = "GW3enefjwY0";
+
+        for (Link l:current_medialist) {
+            if (l.getText().toLowerCase().equals("youtube")) {
+                String[] fields = l.getUri().split("=");
+                video_id = fields[fields.length-1];
+            }
+        }
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        yf.setVideoID(video_id);
 
     }
 
@@ -543,9 +562,12 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void placeOnMarker(final Pin pin) {
 
+
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(pin.getLat(), pin.getLng())));
 
         selected_pin = pin.getId();
+        current_pin = pin;
 
         if (pinInfoFragment == null) {
 
