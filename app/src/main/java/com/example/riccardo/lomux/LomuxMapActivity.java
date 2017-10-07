@@ -200,23 +200,31 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                         row[12],    //sourceName
                         row[13],    //source
                         //null,       //TODO implement stuff for loading image in this case
-                        row[14],    //artist name
-                        row[15],    //Song title
-                        row[16]     //lyrics
+                        row[15],    //artist name
+                        row[16],    //Song title
+                        row[17]     //lyrics
                         );
-                // now on row[17] and row[18] we have media type (Youtube, Spotify for now) and their URI
+                // now on row[18] and row[19] we have media type (Youtube, Spotify for now) and their URI
                 // we extract them here
                 try {
-                    String[] medias = row[17].split(",");
-                    String[] mediaUri = row[18].split(",");
-                    for (int ii = 0; ii < medias.length; ii++) {
+                    Log.d("mediaload", row[18]);
+                    String[] medias = row[18].split(",");
+                    String[] mediaUri = row[19].split(",");
+                    Log.d("mediaload", String.valueOf(medias.length));
+
+
+                    for (int ii = 0; ii < medias.length; (ii)++) {
                         currentPin.addMedia(medias[ii], mediaUri[ii]);
+                        Log.d("mediaload", currentPin.getName() + medias[ii]);
+
                     }
                 } catch (ArrayIndexOutOfBoundsException ex )
                 {
                     // no media sources found
-                    Log.d("Pin", "No media sources available");
+                    Log.d("mediaload", "No media sources available");
                 }
+
+
 
                 String photos_present = row[14];
 
@@ -516,8 +524,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         if (pinInfoFragment == null) {
 
-
-
             Bundle args = new Bundle();
             args.putString(PinInfoFragment.ARG_NAME, pin.getName());
             args.putString(PinInfoFragment.ARG_ADDRESS, pin.getAddress());
@@ -538,8 +544,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             pinInfoFragment = new PinInfoFragment();
             pinInfoFragment.setArguments(args);
-
-
 
 
             getSupportFragmentManager().beginTransaction()
@@ -565,10 +569,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
 
             shownFragment = true;
+            pinInfoFragment.reset_buttons();
+
         }
 
         else {
             pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
+            pinInfoFragment.reset_buttons();
 
         }
 
