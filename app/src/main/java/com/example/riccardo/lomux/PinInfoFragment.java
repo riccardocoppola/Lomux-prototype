@@ -44,6 +44,7 @@ public class PinInfoFragment extends Fragment {
     private TextView source_label;
     private ImageView pin_fragment_image;
     private int image_reference;
+    private String href = null;
 
     private ImageButton arrow_button;
 
@@ -199,7 +200,7 @@ public class PinInfoFragment extends Fragment {
 
     }
 
-    public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type) {
+    public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type) {
 
 
         LinearLayout source_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linearlayout_for_source);
@@ -229,7 +230,7 @@ public class PinInfoFragment extends Fragment {
         info.setText(arg_info);
         subtitle_textview.setText(arg_subtitle);
 
-        if (arg_formore.compareTo("-") == 0 || arg_formore.trim().compareTo("") == 0) {
+        if (sourceName.compareTo("-") == 0 || arg_formore.trim().compareTo("") == 0) {
 
             source_label.setText("");
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
@@ -239,7 +240,7 @@ public class PinInfoFragment extends Fragment {
         }
         else {
             source_label.setText("Source: ");
-            formore.setText(arg_formore);
+            formore.setText(sourceName);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=0.1f;
             Log.d("sourcehide", "not hide" + " " + arg_formore);
