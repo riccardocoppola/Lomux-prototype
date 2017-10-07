@@ -184,7 +184,6 @@ public class PinInfoFragment extends Fragment {
 
 
 
-
         return rootView;
 
 
