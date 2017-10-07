@@ -213,7 +213,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                     Log.d("mediaload", String.valueOf(medias.length));
 
 
-
                     for (int ii = 0; ii < medias.length; (ii)++) {
                         currentPin.addMedia(medias[ii], mediaUri[ii]);
                         Log.d("mediaload", currentPin.getName() + medias[ii]);
@@ -222,7 +221,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 } catch (ArrayIndexOutOfBoundsException ex )
                 {
                     // no media sources found
-                    Log.d("Pin", "No media sources available");
+                    Log.d("mediaload", "No media sources available");
                 }
 
 
