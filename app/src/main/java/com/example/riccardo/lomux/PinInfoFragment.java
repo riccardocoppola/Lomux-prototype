@@ -3,6 +3,7 @@ package com.example.riccardo.lomux;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.*;
 import java.util.ArrayList;
 
 /**
@@ -169,24 +171,29 @@ public class PinInfoFragment extends Fragment {
 
         private double lng;
         private double lat;
+        private PackageManager pm;
 
-        public ShareListener(double lng, double lat) {
+        public ShareListener(double lng, double lat, PackageManager pm) {
             this.lng = lng;
             this.lat = lat;
-            Log.d("Directions", "created listener");
+            this.pm = pm;
         }
 
         @Override
         public void onClick(View v)
         {
-            // TO DO load image
-            //Uri imageUri = Uri.parse("android.resource://" + getPackageName()+ "/drawable/" + "ic_launcher");
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, "Hello");
-         //   intent.putExtra(Intent.EXTRA_STREAM, imageUri);
-            intent.setType("image/*");
-            startActivity(intent);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+
+            // Always use string resources for UI text.
+            // This says something like "Share this photo with"
+            String title = getResources().getString(R.string.chooser_title);
+            // Create intent to show chooser
+            Intent chooser = Intent.createChooser(intent, title);
+
+            // Verify the intent will resolve to at least one activity
+            Log.d("sharebutton", "Trying to launch chooser");
+            if (intent.resolveActivity(pm) != null)
+            startActivity(chooser);
 
         }
     };
@@ -231,7 +238,6 @@ public class PinInfoFragment extends Fragment {
         buttons_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_button_horizontal_layout);
 
 
-
         return rootView;
 
 
@@ -259,6 +265,7 @@ public class PinInfoFragment extends Fragment {
         pin_fragment_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
+        share_button = (ImageButton) rootView.findViewById(R.id.imagebutton_share);
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
         back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
@@ -351,7 +358,7 @@ public class PinInfoFragment extends Fragment {
 
         Log.d("Directions", "should create listener");
         arrow_button.setOnClickListener(new ArrowClickListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT)));
-
+        share_button.setOnClickListener(new ShareListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT), getContext().getPackageManager()));
 
         if (mediaLinks != null) {
             for (Link l:mediaLinks) {
@@ -417,7 +424,7 @@ public class PinInfoFragment extends Fragment {
         pin_fragment_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
-
+        share_button = (ImageButton) rootView.findViewById(R.id.imagebutton_share);
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
         back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
         youtube_button = (ImageButton) rootView.findViewById(R.id.imagebutton_youtube);
@@ -433,6 +440,7 @@ public class PinInfoFragment extends Fragment {
         // per committ a caso
 
         arrow_button.setOnClickListener(new ArrowClickListener(arg_lng, arg_lat));
+        share_button.setOnClickListener(new ShareListener(arg_lng, arg_lat, getContext().getPackageManager()));
 
 
         name.setText(arg_name);
