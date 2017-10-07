@@ -34,7 +34,8 @@ public class Pin implements Serializable {
     //optional attributes for all classes of pin
     protected String info = null;                 //information to provide when the pin is clicked
     protected ArrayList<Itinerary> itineraries = new ArrayList<Itinerary>();    //(null) list of itineraries to which the Pin belongs
-    protected String source = null;               //information about where the pin has been taken
+    protected Link source = null;   //information about where the pin has been taken
+    //protected String source = null;
   //  protected Image image = null;                        //image to show in the box opened when the pin is clicked
 
     //attributes for different classes of pins
@@ -54,7 +55,7 @@ public class Pin implements Serializable {
 
 
 
-    public Pin(int id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String source, String artist_name, String song_title, String song_lyrics) {
+    public Pin(int id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
         this.id = id;
         this.pintype = pintype;
         this.lat = lat;
@@ -67,7 +68,7 @@ public class Pin implements Serializable {
         this.city = city;
         this.country = country;
         this.info = info;
-        this.source = source;
+        this.source = new Link(sourceName, source);
     //    this.image = image;
         this.subtitle = subtitle;
         this.artist_name = artist_name;
@@ -129,7 +130,7 @@ public class Pin implements Serializable {
         return info;
     }
 
-    public String getSource() {
+    public Link getSource() {
         return source;
     }
 
@@ -190,8 +191,8 @@ public class Pin implements Serializable {
         this.info = info;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setSource(String sourceName, String href) {
+        this.source = new Link(sourceName, href);
     }
 
   //  public void setImage(Image image) {

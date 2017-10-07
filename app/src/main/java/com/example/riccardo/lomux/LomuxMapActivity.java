@@ -197,7 +197,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                         row[8],     //city
                         row[9],     //country
                         row[10],     //info
-                        row[12],    //source
+                        row[12],    //sourceName
+                        row[13],    //source
                         //null,       //TODO implement stuff for loading image in this case
                         row[14],    //artist name
                         row[15],    //Song title
