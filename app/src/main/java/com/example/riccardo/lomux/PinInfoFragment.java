@@ -1,5 +1,7 @@
 package com.example.riccardo.lomux;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,6 +62,12 @@ public class PinInfoFragment extends Fragment {
 
 
     private LinearLayout buttons_layout;
+
+    private OnYoutubeClickListener youtubeListener;
+
+    public interface OnYoutubeClickListener {
+        public void onYoutubeClick();
+    }
 
     public void reset_buttons() {
 
@@ -159,6 +167,19 @@ public class PinInfoFragment extends Fragment {
 
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            youtubeListener = (OnYoutubeClickListener) context;
+        }
+        catch(ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -195,6 +216,8 @@ public class PinInfoFragment extends Fragment {
     }
 
 
+
+
     //TODO updatepinview
 
     public void updatePinView() {
@@ -212,6 +235,7 @@ public class PinInfoFragment extends Fragment {
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
         back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
+        youtube_button = (ImageButton) rootView.findViewById(R.id.imagebutton_youtube);
 
 
         Bundle args = getArguments();
@@ -339,6 +363,15 @@ public class PinInfoFragment extends Fragment {
             media_button.setEnabled(true);
         }
 
+        if (hasyoutubelink) {
+            youtube_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    youtubeListener.onYoutubeClick();
+                }
+            });
+        }
+
         media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
         back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
 
@@ -360,6 +393,8 @@ public class PinInfoFragment extends Fragment {
 
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
         back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
+        youtube_button = (ImageButton) rootView.findViewById(R.id.imagebutton_youtube);
+
 
 
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
@@ -474,6 +509,15 @@ public class PinInfoFragment extends Fragment {
         else {
             media_button.setAlpha(1.0f);
             media_button.setEnabled(true);
+        }
+
+        if (hasyoutubelink) {
+            youtube_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    youtubeListener.onYoutubeClick();
+                }
+            });
         }
 
         if (image_reference != -1 ) {
