@@ -47,6 +47,7 @@ public class PinInfoFragment extends Fragment {
     private ImageView pin_fragment_image;
     private int image_reference;
     private Link sourceLink = null;
+    private ArrayList<Link> mediaLinks;
 
 
     private ImageButton arrow_button;
@@ -223,7 +224,7 @@ public class PinInfoFragment extends Fragment {
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
-
+        mediaLinks = media_list;
 
 
         //TODO fare funzionare colore
