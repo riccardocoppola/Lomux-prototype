@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -318,16 +320,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void removeAllPins() {
-
-        Marker toRemove = null;
-
-        for (Map.Entry<Marker, Pin> m: markerPinHashMap.entrySet()) {
-            toRemove = m.getKey();
-            toRemove.remove();
-        }
-
-        markerPinHashMap.clear();
-
+       mClusterManager.clearItems();
     }
 
     private void placeItineraryPins(String id) {
@@ -341,8 +334,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void placeAllPins() {
         removeAllPins();
+        DefaultClusterRenderer<Pin> dcr;
+        ArrayList<PinType> icons = new ArrayList<>();
         for (Pin p: pinSet.values()) {
-            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
+           // Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
+            mClusterManager.addItem(p);
+            icons.add(p.getPintype());
+            /*
             Log.d("PinName", p.getName());
             Log.d("PinType", p.getPintype().toString());
             switch (p.getPintype()) {
@@ -365,9 +363,39 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
             }
             markerPinHashMap.put(marker, p);
-           // p.setMarker(marker);
+           // p.setMarker(marker);*/
             p.setVisible();
         }
+        int ii = 0;
+        PinType cur;
+        for (Marker marker : mClusterManager.getMarkerCollection().getMarkers())
+        {
+            cur = icons.get(ii);
+            switch (cur)
+            {
+                case VENUE:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_v));
+                    break;
+                case STUDIO:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_r));
+                    break;
+                case WORK:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_w));
+                    break;
+                case PRIVATE:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_p));
+                    break;
+                case MONUMENT:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_m));
+                    break;
+                default:
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
+            }
+            mClusterManager.onMarkerClick(marker);
+            ii++;
+        }
+
+
     }
 
 
