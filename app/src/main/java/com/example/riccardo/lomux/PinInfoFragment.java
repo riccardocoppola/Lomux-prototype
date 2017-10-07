@@ -143,9 +143,12 @@ public class PinInfoFragment extends Fragment {
             lp.weight=0.1f;
             Log.d("sourcehide", "not hide" + " " + args.getString(PinInfoFragment.ARG_SOURCE_NAME));
             source_layout.setLayoutParams(lp);
+            sourceLink = new Link(args.getString(PinInfoFragment.ARG_SOURCE_NAME), args.getString(PinInfoFragment.ARG_SOURCE));
         }
 
-        formore.setText(args.getString(PinInfoFragment.ARG_SOURCE_NAME));
+        if (sourceLink != null) {
+            formore.setOnClickListener(new URIClickListener(sourceLink.getUri()));
+        }
         subtitle_textview.setText(args.getString(PinInfoFragment.ARG_SUBTITLE));
 
         String pin_type = args.getString(PinInfoFragment.ARG_TYPE);
@@ -247,7 +250,14 @@ public class PinInfoFragment extends Fragment {
             Log.d("sourcehide", "not hide" + " " + arg_formore);
 
             source_layout.setLayoutParams(lp);
+            sourceLink = new Link(sourceName, arg_formore);
+
         }
+
+        if (sourceLink != null) {
+            formore.setOnClickListener(new URIClickListener(sourceLink.getUri()));
+        }
+
 
         LinearLayout layout_name = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linear_layout_for_title);
         ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
