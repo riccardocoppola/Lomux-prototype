@@ -180,6 +180,17 @@
                     android:src="@drawable/arrow_directions_blue"/>
 
 
+                <ImageButton
+                    android:id="@+id/imagebutton_share"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:padding="3dp"
+                    android:src="@drawable/share_button_blue" />
+
 
                 <ImageButton
                     android:id="@+id/imagebutton_play"
@@ -193,16 +204,7 @@
                     android:src="@drawable/play_button_blue" />
 
 
-                <ImageButton
-                    android:id="@+id/imagebutton_share"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:background="@null"
-                    android:layout_weight="1"
-                    android:scaleType="fitCenter"
-                    android:padding="3dp"
-                    android:src="@drawable/share_button_blue" />
+
 
 
             </LinearLayout>

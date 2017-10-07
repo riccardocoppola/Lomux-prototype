@@ -51,6 +51,7 @@ public class PinInfoFragment extends Fragment {
 
 
     private ImageButton arrow_button;
+    private ImageButton media_button;
 
     public class ArrowClickListener implements View.OnClickListener
     {
@@ -125,9 +126,13 @@ public class PinInfoFragment extends Fragment {
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
+        media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
 
 
         Bundle args = getArguments();
+
+
+        mediaLinks = (ArrayList<Link>) args.getSerializable(PinInfoFragment.ARG_MEDIALIST);
 
 
         name.setText(args.getString(PinInfoFragment.ARG_NAME));
@@ -163,6 +168,9 @@ public class PinInfoFragment extends Fragment {
         LinearLayout layout_name = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linear_layout_for_title);
 
         ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
+
+
+
 
 
         if (pin_type.compareTo("WORK") == 0) {
@@ -208,6 +216,37 @@ public class PinInfoFragment extends Fragment {
         arrow_button.setOnClickListener(new ArrowClickListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT)));
 
 
+        if (mediaLinks != null) {
+            for (Link l:mediaLinks) {
+                Log.d("medialinks", l.getText());
+            }
+        }
+
+
+        boolean hasmedialinks = false;
+        if (mediaLinks != null && mediaLinks.size() != 0) {
+
+            for(Link l: mediaLinks) {
+
+                if (l.getText().toLowerCase().equals("youtube")) {
+                    hasmedialinks = true;
+                }
+                else if (l.getText().toLowerCase().equals("spotify")) {
+                    hasmedialinks = true;
+                }
+
+            }
+        }
+
+
+        if (!hasmedialinks) {
+            media_button.setAlpha(0.2f);
+        }
+        else {
+            media_button.setAlpha(1.0f);
+        }
+
+
     }
 
     public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type, ArrayList<Link> media_list) {
@@ -223,6 +262,9 @@ public class PinInfoFragment extends Fragment {
         pin_fragment_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
+
+        media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
+
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
         mediaLinks = media_list;
 
@@ -302,6 +344,29 @@ public class PinInfoFragment extends Fragment {
 
         //TODO aggiungere switch sul tipo e linearlayout con una piccola immagine
 
+
+        boolean hasmedialinks = false;
+        if (mediaLinks != null && mediaLinks.size() != 0) {
+
+            for(Link l: mediaLinks) {
+
+                if (l.getText().toLowerCase().equals("youtube")) {
+                    hasmedialinks = true;
+                }
+                else if (l.getText().toLowerCase().equals("spotify")) {
+                    hasmedialinks = true;
+                }
+
+            }
+        }
+
+
+        if (!hasmedialinks) {
+            media_button.setAlpha(0.5f);
+        }
+        else {
+            media_button.setAlpha(1.0f);
+        }
 
         if (image_reference != -1 ) {
             pin_fragment_image.setImageResource(arg_imageid);
