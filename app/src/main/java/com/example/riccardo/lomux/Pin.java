@@ -44,7 +44,7 @@ public class Pin implements Serializable {
                     //possibly define later an STUDIO as a class, to filter out all pins related to the same artist
     protected String song_title = null;           //mandatory for WORK pins, name of the song (or album)
     protected String song_lyrics = null;          //optional for WORK pins, lyrics of the song related to the place
-
+    protected ArrayList<Link> mediaList = null;     // list of URIs to open Youtube or Spotify to reproduce media
 
   //  protected Marker marker = null;             //the pin is connected to the marker that is then shown in the map, when
                                                  //the marker is created from the application
@@ -246,4 +246,12 @@ public class Pin implements Serializable {
     public void setImage_reference(int image_reference) {
         this.image_reference = image_reference;
     }
+
+    public void addMedia(String type, String URI) {
+        if (mediaList == null)
+            mediaList = new ArrayList<>();
+
+        mediaList.add(new Link(type, URI));
+    }
+
 }

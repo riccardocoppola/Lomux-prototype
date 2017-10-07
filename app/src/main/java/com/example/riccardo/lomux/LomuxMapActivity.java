@@ -547,13 +547,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             fragment_frame.setLayoutParams(lp);
 
 
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
 
             shownFragment = true;
         }
 
         else {
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
 
         }
 
