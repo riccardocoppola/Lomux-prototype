@@ -46,7 +46,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Boolean shownFragment = false;
 
     private String selected_itinerary = "All Pins";
-    private String selected_pin = null;
+    private String selected_pin = "";
 
     private HashMap<Marker, Pin> markerPinHashMap = new HashMap<Marker, Pin>();
     private HashMap<String, Pin> pinSet = null;
@@ -79,10 +79,10 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
 
-        Itinerary allpinsitinerary = new Itinerary("", "All Pins", "All pins of current city", null);
+        Itinerary allpinsitinerary = new Itinerary("0", "All Pins", "All pins of current city", null);
         allpinsitinerary.setImage_reference(getApplicationContext().getResources().getIdentifier("it0square", "drawable", getApplicationContext().getPackageName()));
         allpinsitinerary.setImage_circle_reference(getApplicationContext().getResources().getIdentifier("it0circle", "drawable", getApplicationContext().getPackageName()));
-        itineraries.put("", allpinsitinerary);
+        itineraries.put("0", allpinsitinerary);
 
 
 
@@ -126,7 +126,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 String[] pins_string = row[4].split(",");
                 if (pins_string[0].compareTo("-") != 0) {
                     for (String s:pins_string) {
-                        int current_pin = Integer.parseInt(s);
+                        String current_pin = s;
                         currentItinerary.addPin(pinSet.get(current_pin));
                         pinSet.get(current_pin).addItinerary(currentItinerary);
                     }
@@ -613,7 +613,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         closePinFragment();
 
-        selected_pin = null;
+        selected_pin = "";
 
     }
 
