@@ -207,9 +207,14 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 // now on row[18] and row[19] we have media type (Youtube, Spotify for now) and their URI
                 // we extract them here
                 try {
+                    Log.d("mediaload", row[18]);
                     String[] medias = row[18].split(",");
                     String[] mediaUri = row[19].split(",");
-                    for (int ii = 0; ii < medias.length; ii++) {
+                    Log.d("mediaload", String.valueOf(medias.length));
+
+
+
+                    for (int ii = 0; ii < medias.length; (ii)++) {
                         currentPin.addMedia(medias[ii], mediaUri[ii]);
                         Log.d("mediaload", currentPin.getName() + medias[ii]);
 
@@ -565,10 +570,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
 
             shownFragment = true;
+            pinInfoFragment.reset_buttons();
+
         }
 
         else {
             pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
+            pinInfoFragment.reset_buttons();
 
         }
 

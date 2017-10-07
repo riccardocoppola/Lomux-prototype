@@ -3,6 +3,7 @@ package com.example.riccardo.lomux;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
@@ -50,8 +51,85 @@ public class PinInfoFragment extends Fragment {
     private ArrayList<Link> mediaLinks;
 
 
+    private ImageButton share_button;
     private ImageButton arrow_button;
     private ImageButton media_button;
+    private ImageButton youtube_button;
+    private ImageButton spotify_button;
+    private ImageButton back_button;
+
+
+    private LinearLayout buttons_layout;
+
+    public void reset_buttons() {
+
+
+        LinearLayout.LayoutParams lp_visible = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+        lp_visible.weight=1.0f;
+
+        LinearLayout.LayoutParams lp_hidden = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+        lp_hidden.weight=0.0f;
+
+        arrow_button.setLayoutParams(lp_visible);
+        share_button.setLayoutParams(lp_visible);
+        media_button.setLayoutParams(lp_visible);
+        youtube_button.setLayoutParams(lp_hidden);
+        spotify_button.setLayoutParams(lp_hidden);
+        back_button.setLayoutParams(lp_hidden);
+
+    }
+
+    public class MediaButtonClickListener implements View.OnClickListener {
+
+        private LinearLayout linear_layout;
+        private boolean hide;
+        private boolean hasyoutubelink;
+        private boolean hasspotifylink;
+
+        public MediaButtonClickListener(LinearLayout linear_layout, boolean hide, boolean hasyoutubelink, boolean hasspotifylink) {
+            this.linear_layout = linear_layout;
+            this.hide = hide;
+            this.hasyoutubelink = hasyoutubelink;
+            this.hasspotifylink = hasspotifylink;
+        }
+
+        @Override
+        public void onClick(View v) {
+            ImageButton arrow_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_arrow_directions);
+            ImageButton share_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_share);
+            ImageButton media_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_play);
+            ImageButton youtube_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_youtube);
+            ImageButton spotify_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_spotify);
+            ImageButton back_button = (ImageButton) linear_layout.findViewById(R.id.imagebutton_back);
+
+            LinearLayout.LayoutParams lp_visible = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+            lp_visible.weight=1.0f;
+
+            LinearLayout.LayoutParams lp_hidden = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+            lp_hidden.weight=0.0f;
+
+            if (hide) {
+                arrow_button.setLayoutParams(lp_hidden);
+                share_button.setLayoutParams(lp_hidden);
+                media_button.setLayoutParams(lp_hidden);
+                if (hasyoutubelink)
+                    youtube_button.setLayoutParams(lp_visible);
+                else
+                    youtube_button.setLayoutParams(lp_hidden);
+                if (hasspotifylink)
+                    spotify_button.setLayoutParams(lp_visible);
+                else
+                    spotify_button.setLayoutParams(lp_hidden);
+                back_button.setLayoutParams(lp_visible);
+            }
+            else {
+                reset_buttons();
+            }
+
+
+        }
+
+    }
 
     public class ArrowClickListener implements View.OnClickListener
     {
@@ -84,6 +162,7 @@ public class PinInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         rootView = inflater.inflate(R.layout.fragment_pin_layout, container, false);
         updatePinView();
 
@@ -95,7 +174,13 @@ public class PinInfoFragment extends Fragment {
         pin_fragment_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
+        share_button = (ImageButton) rootView.findViewById(R.id.imagebutton_share);
+        media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
+        back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
+        spotify_button = (ImageButton) rootView.findViewById(R.id.imagebutton_spotify);
+        youtube_button = (ImageButton) rootView.findViewById(R.id.imagebutton_youtube);
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
+        buttons_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_button_horizontal_layout);
 
 
 
@@ -127,6 +212,7 @@ public class PinInfoFragment extends Fragment {
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
+        back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
 
 
         Bundle args = getArguments();
@@ -210,6 +296,7 @@ public class PinInfoFragment extends Fragment {
         }
 
 
+        LinearLayout buttons_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_button_horizontal_layout);
 
 
         Log.d("Directions", "should create listener");
@@ -223,29 +310,38 @@ public class PinInfoFragment extends Fragment {
         }
 
 
-        boolean hasmedialinks = false;
+        boolean hasyoutubelink = false;
+        boolean hasspotifylink = false;
         if (mediaLinks != null && mediaLinks.size() != 0) {
 
             for(Link l: mediaLinks) {
 
+                Log.d("checklinks", l.getText());
+
                 if (l.getText().toLowerCase().equals("youtube")) {
-                    hasmedialinks = true;
+                    Log.d("checklinks", "has youtube");
+                    hasyoutubelink = true;
                 }
                 else if (l.getText().toLowerCase().equals("spotify")) {
-                    hasmedialinks = true;
+                    Log.d("checklinks", "has spotify");
+                    hasspotifylink = true;
                 }
 
             }
         }
 
 
-        if (!hasmedialinks) {
+        if (!hasyoutubelink && !hasspotifylink) {
             media_button.setAlpha(0.2f);
+            media_button.setEnabled(false);
         }
         else {
             media_button.setAlpha(1.0f);
+            media_button.setEnabled(true);
         }
 
+        media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
+        back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
 
     }
 
@@ -264,6 +360,8 @@ public class PinInfoFragment extends Fragment {
         arrow_button = (ImageButton) rootView.findViewById(R.id.imagebutton_arrow_directions);
 
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
+        back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
+
 
         source_label = (TextView) rootView.findViewById(R.id.pin_fragment_layout_source_label);
         mediaLinks = media_list;
@@ -345,27 +443,38 @@ public class PinInfoFragment extends Fragment {
         //TODO aggiungere switch sul tipo e linearlayout con una piccola immagine
 
 
-        boolean hasmedialinks = false;
+        boolean hasyoutubelink = false;
+        boolean hasspotifylink = false;
         if (mediaLinks != null && mediaLinks.size() != 0) {
 
             for(Link l: mediaLinks) {
+                Log.d("checklinks", l.getText());
 
                 if (l.getText().toLowerCase().equals("youtube")) {
-                    hasmedialinks = true;
+                    Log.d("checklinks", "hasyoutubelink");
+
+                    hasyoutubelink = true;
                 }
                 else if (l.getText().toLowerCase().equals("spotify")) {
-                    hasmedialinks = true;
+                    Log.d("checklinks", "hasspotifylink");
+
+                    hasspotifylink = true;
                 }
 
             }
         }
+        LinearLayout buttons_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_button_horizontal_layout);
+        media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
+        back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
 
 
-        if (!hasmedialinks) {
-            media_button.setAlpha(0.5f);
+        if (!hasyoutubelink && !hasspotifylink) {
+            media_button.setAlpha(0.2f);
+            media_button.setEnabled(false);
         }
         else {
             media_button.setAlpha(1.0f);
+            media_button.setEnabled(true);
         }
 
         if (image_reference != -1 ) {
