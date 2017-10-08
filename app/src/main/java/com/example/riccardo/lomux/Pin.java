@@ -1,5 +1,9 @@
 package com.example.riccardo.lomux;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -39,7 +43,7 @@ public class Pin implements Serializable, ClusterItem {
     protected ArrayList<Itinerary> itineraries = new ArrayList<Itinerary>();    //(null) list of itineraries to which the Pin belongs
     protected Link source = null;   //information about where the pin has been taken
     //protected String source = null;
-  //  protected Image image = null;                        //image to show in the box opened when the pin is clicked
+    protected boolean image;                        //image to show in the box opened when the pin is clicked
 
     //attributes for different classes of pins
     protected String subtitle = null;           //mandatory for VENUE pins, name of the place, optional for STUDIO/WORK
@@ -53,12 +57,13 @@ public class Pin implements Serializable, ClusterItem {
                                                  //the marker is created from the application
 
     protected Boolean visible = false;
-
+    private String image_path = null;
     private int image_reference = -1;        //only at the beginning in which images are loaded in res folders
 
 
 
-    public Pin(String id, PinType pintype, double lat, double lng, String name, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
+
+    public Pin(String id, PinType pintype, double lat, double lng, String name, String yesImage, String subtitle, String address, String zipcode, String city, String country, String info, String sourceName, String source, String artist_name, String song_title, String song_lyrics) {
         this.id = id;
         this.pintype = pintype;
         this.lat = lat;
@@ -72,12 +77,13 @@ public class Pin implements Serializable, ClusterItem {
         this.country = country;
         this.info = info;
         this.source = new Link(sourceName, source);
-    //    this.image = image;
+
         this.subtitle = subtitle;
         this.artist_name = artist_name;
         this.song_title = song_title;
         this.song_lyrics = song_lyrics;
         this.visible = false;
+        image = yesImage.equals("yes");
        // marker = null;
     }
 
@@ -277,4 +283,18 @@ public class Pin implements Serializable, ClusterItem {
     public String getSnippet() {
         return null;
     }
+
+    public String getImageUrl()
+    {
+        if (image)
+            return image_path + id + ".png";
+        else
+            return null;
+    }
+
+    public void setImage_path(String path)
+    {
+        image_path = path;
+    }
+
 }

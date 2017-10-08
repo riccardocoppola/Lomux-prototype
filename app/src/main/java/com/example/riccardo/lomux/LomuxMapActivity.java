@@ -319,6 +319,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                         lng,
                         //new LatLng(lat, lng),     //lat and long in a new latlong object
                         JO.getString("Title"),     //name
+                        JO.getString("Image"),
                         JO.getString("Subtitle"),     //subtitle
                         JO.getString("Address"),     //address
                         JO.getString("ZIP"),     //zipcode
@@ -327,11 +328,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                         JO.getString("Info"),     //info
                         JO.getString("SourceName"),    //sourceName
                         JO.getString("Source"),    //source
-                        //null,       //TODO implement stuff for loading image in this case
                         JO.getString("Artist"),    //artist name
                         JO.getString("SongTitle"),    //Song title
                         JO.getString("Lyrics")     //lyrics
                         );
+                currentPin.setImage_path(getString(R.string.thumbnails_url));
                 // now on row[18] and row[19] we have media type (Youtube, Spotify for now) and their URI
                 // we extract them here
                 try {
@@ -648,6 +649,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             args.putString(PinInfoFragment.ARG_SUBTITLE, pin.getSubtitle());
             args.putInt(PinInfoFragment.ARG_IMAGE, pin.getImage_reference());
             args.putString(PinInfoFragment.ARG_TYPE, pin.getPintype().toString());
+            args.putString(PinInfoFragment.ARG_IMAGE_REF, pin.getImageUrl());
             args.putSerializable(PinInfoFragment.ARG_MEDIALIST, pin.getMediaList());
 
 
@@ -686,7 +688,19 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             fragment_frame.setLayoutParams(lp);
 
 
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
+            pinInfoFragment.updatePinView(pin.getName(),
+                    pin.getSubtitle(),
+                    pin.getAddress(),
+                    pin.getArtist_name(),
+                    pin.getInfo(),
+                    pin.getSource().getText(),
+                    pin.getSource().getUri(),
+                    pin.getImage_reference(),
+                    pin.getLng(),
+                    pin.getLat(),
+                    pin.getPintype(),
+                    pin.getMediaList(),
+                    pin.getImageUrl());
 
             shownFragment = true;
             pinInfoFragment.reset_buttons();
@@ -704,7 +718,19 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
             getSupportFragmentManager().executePendingTransactions();
 
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource().getText(), pin.getSource().getUri(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype(), pin.getMediaList());
+            pinInfoFragment.updatePinView(pin.getName(),
+                    pin.getSubtitle(),
+                    pin.getAddress(),
+                    pin.getArtist_name(),
+                    pin.getInfo(),
+                    pin.getSource().getText(),
+                    pin.getSource().getUri(),
+                    pin.getImage_reference(),
+                    pin.getLng(),
+                    pin.getLat(),
+                    pin.getPintype(),
+                    pin.getMediaList(),
+                    pin.getImageUrl());
             pinInfoFragment.reset_buttons();
 
         }

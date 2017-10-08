@@ -2,4 +2,5 @@
     <string name="app_name">Lomux</string>
     <string name="title_activity_lomux_map">Lomux Map</string>
     <string name="chooser_title">Share</string>
+    <string name="thumbnails_url">https://test-db-lomux.000webhostapp.com/thumbnail/</string>
 </resources>

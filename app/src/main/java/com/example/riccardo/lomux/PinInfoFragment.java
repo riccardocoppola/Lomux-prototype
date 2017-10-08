@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.*;
+
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 /**
@@ -39,6 +42,7 @@ public class PinInfoFragment extends Fragment {
     final static String ARG_SUBTITLE = "subtitle";
     final static String ARG_TYPE = "type";
     final static String ARG_MEDIALIST = "media_list";
+    final static String ARG_IMAGE_REF = "image_ref";
 
     View rootView;
 
@@ -250,10 +254,10 @@ public class PinInfoFragment extends Fragment {
 
         LinearLayout source_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linearlayout_for_source);
 
-        name = (TextView) rootView.findViewById(R.id.pin_fragment_layout_title);
+        this.name = (TextView) rootView.findViewById(R.id.pin_fragment_layout_title);
         address_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_address);
         artists_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_artists);
-        info = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_info);
+        this.info = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_info);
         formore = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_formore);
         pin_fragment_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
         subtitle_textview = (TextView) rootView.findViewById(R.id.pin_fragment_layout_textview_subtitle);
@@ -271,10 +275,10 @@ public class PinInfoFragment extends Fragment {
         mediaLinks = (ArrayList<Link>) args.getSerializable(PinInfoFragment.ARG_MEDIALIST);
 
 
-        name.setText(args.getString(PinInfoFragment.ARG_NAME));
+        this.name.setText(args.getString(PinInfoFragment.ARG_NAME));
         address_textview.setText(args.getString(PinInfoFragment.ARG_ADDRESS));
         artists_textview.setText(args.getString(PinInfoFragment.ARG_ARTISTS));
-        info.setText(args.getString(PinInfoFragment.ARG_INFO));
+        this.info.setText(args.getString(PinInfoFragment.ARG_INFO));
 
         if (args.getString(PinInfoFragment.ARG_SOURCE_NAME).compareTo("-") == 0 || args.getString(PinInfoFragment.ARG_SOURCE_NAME).trim().compareTo("") == 0) {
             source_label.setText("");
@@ -303,12 +307,15 @@ public class PinInfoFragment extends Fragment {
 
         LinearLayout layout_name = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linear_layout_for_title);
 
-        ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
 
 
-
-
-
+        // download image here
+        ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
+        if (args.getString(PinInfoFragment.ARG_IMAGE_REF) != null)
+            Picasso.with(getContext()).load(args.getString(PinInfoFragment.ARG_IMAGE_REF)).into(layout_image);
+        else
+            this.image_reference = -1;
+        layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
         if (pin_type.compareTo("WORK") == 0) {
             layout_name.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorWork));
             layout_image.setImageResource(R.drawable.title_layout_w);
@@ -335,11 +342,9 @@ public class PinInfoFragment extends Fragment {
         }
 
 
-        image_reference = args.getInt(PinInfoFragment.ARG_IMAGE);
 
-
-        if (image_reference != -1 ) {
-            pin_fragment_image.setImageResource(image_reference);
+        if (this.image_reference != -1 ) {
+            //pin_fragment_image.setImageResource(this.image_reference);
         }
         else {
             pin_fragment_image.setImageResource(R.drawable.info_pin_placeholder);
@@ -443,7 +448,19 @@ public class PinInfoFragment extends Fragment {
             return false;
         }
     }
-    public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type, ArrayList<Link> media_list) {
+    public void updatePinView(String arg_name,
+                              String arg_subtitle,
+                              String arg_firstrow,
+                              String arg_secondrow,
+                              String arg_info,
+                              String sourceName,
+                              String arg_formore,
+                              int arg_imageid,
+                              double arg_lng,
+                              double arg_lat,
+                              PinType arg_type,
+                              ArrayList<Link> media_list,
+                              String imageRef) {
 
 
         LinearLayout source_layout = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linearlayout_for_source);
@@ -507,8 +524,15 @@ public class PinInfoFragment extends Fragment {
 
 
         LinearLayout layout_name = (LinearLayout) rootView.findViewById(R.id.pin_fragment_layout_linear_layout_for_title);
-        ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
 
+
+        ImageView layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_imageview);
+        Log.d("image", imageRef);
+        if (imageRef != null)
+            Picasso.with(getContext()).load(imageRef).into(layout_image);
+        else
+            image_reference = -1;
+        layout_image = (ImageView) rootView.findViewById(R.id.pin_fragment_layout_title_image);
         switch(arg_type) {
             case PRIVATE:
                 layout_name.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorPrivate));
@@ -588,10 +612,10 @@ public class PinInfoFragment extends Fragment {
         }
 
         if (image_reference != -1 ) {
-            pin_fragment_image.setImageResource(arg_imageid);
+            //pin_fragment_image.setImageResource(arg_imageid);
         }
         else {
-            pin_fragment_image.setImageResource(R.drawable.info_pin_placeholder);
+            pin_fragment_image.setImageResource(R.drawable.it0square);
         }
 
 
