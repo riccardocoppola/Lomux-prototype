@@ -24,6 +24,10 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,6 +68,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     private ClusterManager<Pin> mClusterManager;
 
     private boolean youtube_over = false;
+    String json_string;
+    String json_itinerary;
+
+    JSONObject jsonObject;
+    JSONArray jsonArray;
 
 
 
@@ -133,8 +142,64 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         allpinsitinerary.setImage_circle_reference(getApplicationContext().getResources().getIdentifier("it0circle", "drawable", getApplicationContext().getPackageName()));
         itineraries.put("0", allpinsitinerary);
 
+        try {
+            jsonObject = new JSONObject(json_itinerary);
+            jsonArray = jsonObject.getJSONArray("result");
+            String number,name,info;
+
+            int count;
+            for(count=0; count<jsonArray.length();count++)
+            {
+                JSONObject JO=jsonArray.getJSONObject(count);
+                number = JO.getString("Number");
+                name = JO.getString("Name");
+                info = JO.getString("Info");
+                Itinerary currentItinerary = new Itinerary(number, name, info, null);
+
+                String photos_present = JO.getString("Image");
+
+                if (photos_present.compareTo("yes") == 0) {
+
+                    String field_square_image = new String("it" + currentItinerary.getID() + "square");
+                    String field_circle_image = new String("it" + currentItinerary.getID() + "circle");
+
+                    Log.d("string square", field_square_image);
+
+                    int resourceIdsquare = getApplicationContext().getResources().getIdentifier(field_square_image, "drawable", getApplicationContext().getPackageName());
+
+                    int resourceIdcircle = getApplicationContext().getResources().getIdentifier(field_circle_image, "drawable", getApplicationContext().getPackageName());
+                    Log.d("square", String.valueOf(resourceIdcircle));
+
+                    currentItinerary.setImage_reference(resourceIdsquare);
+                    currentItinerary.setImage_circle_reference(resourceIdcircle);
+
+                }
 
 
+                String[] pins_string = JO.getString("Pins").split(",");
+                if (pins_string[0].compareTo("-") != 0) {
+                    for (String s:pins_string) {
+                        String current_pin = s;
+                        currentItinerary.addPin(pinSet.get(current_pin));
+                        pinSet.get(current_pin).addItinerary(currentItinerary);
+                    }
+                }
+
+
+                itineraries.put(number, currentItinerary);
+
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return itineraries;
+
+    }
+
+/*
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
@@ -199,10 +264,10 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
         return itineraries;
     }
-
-    private HashMap<String, Pin> pinReader() {
+*/
+    private HashMap<String, Pin> pinReader() throws JSONException {
         HashMap<String, Pin> pinSet = new HashMap<String, Pin>();
-        InputStream inputStream = getResources().openRawResource(R.raw.lomux_data);
+        /* inputStream = getResources().openRawResource(R.raw.lomux_data);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
 
@@ -224,41 +289,55 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 else if (row[1].compareTo("P") == 0) pinType = PinType.PRIVATE;
                 else if (row[1].compareTo("M") == 0) pinType = PinType.MONUMENT;
                 else pinType = PinType.LOTM;
+*/
+        PinType pinType;
+        jsonObject = new JSONObject(json_string);
+        jsonArray = jsonObject.getJSONArray("result");
+        String type;
+        Log.d("JSON", json_string);
+        int count;
+        for(count=0; count<jsonArray.length();count++)
+        {
+            JSONObject JO=jsonArray.getJSONObject(count);
+            type = JO.getString("Type");
+        if (type.compareTo("V") == 0) pinType = PinType.VENUE;
+        else if (type.compareTo("R") == 0) pinType = PinType.STUDIO;
+        else if (type.compareTo("W") == 0) pinType = PinType.WORK;
+        else if (type.compareTo("P") == 0) pinType = PinType.PRIVATE;
+        else if (type.compareTo("M") == 0) pinType = PinType.MONUMENT;
+        else pinType = PinType.LOTM;
 
-                String number = row[0];
-                double lat = Double.parseDouble(row[2].replaceAll(",","."));
-                double lng = Double.parseDouble(row[3].replaceAll(",","."));
+            String number = JO.getString("ID_ROW");
+            double lat = Double.parseDouble(JO.getString("Lat").replaceAll(",","."));
+            double lng = Double.parseDouble(JO.getString("Lon").replaceAll(",","."));
 
 
-                for (String s:row) {
-                    Log.d("Elements", s);
-                }
-                Log.d("Pin", String.valueOf(row[11]));
+
                 Pin currentPin = new Pin(number,                              //number
                         pinType,                                                                //pinType
                         lat,
                         lng,
                         //new LatLng(lat, lng),     //lat and long in a new latlong object
-                        row[4],     //name
-                        row[5],     //subtitle
-                        row[6],     //address
-                        row[7],     //zipcode
-                        row[8],     //city
-                        row[9],     //country
-                        row[10],     //info
-                        row[12],    //sourceName
-                        row[13],    //source
+                        JO.getString("Title"),     //name
+                        JO.getString("Subtitle"),     //subtitle
+                        JO.getString("Address"),     //address
+                        JO.getString("ZIP"),     //zipcode
+                        JO.getString("City"),     //city
+                        JO.getString("Country"),     //country
+                        JO.getString("Info"),     //info
+                        JO.getString("SourceName"),    //sourceName
+                        JO.getString("Source"),    //source
                         //null,       //TODO implement stuff for loading image in this case
-                        row[15],    //artist name
-                        row[16],    //Song title
-                        row[17]     //lyrics
+                        JO.getString("Artist"),    //artist name
+                        JO.getString("SongTitle"),    //Song title
+                        JO.getString("Lyrics")     //lyrics
                         );
                 // now on row[18] and row[19] we have media type (Youtube, Spotify for now) and their URI
                 // we extract them here
                 try {
-                    Log.d("mediaload", row[18]);
-                    String[] medias = row[18].split(",");
-                    String[] mediaUri = row[19].split(",");
+                    Log.d("mediaload", JO.getString("MediaType"));
+                    String[] medias = JO.getString("MediaType").split(",");
+                    String[] mediaUri = JO.getString("MediaURL").split(",");
                     Log.d("mediaload", String.valueOf(medias.length));
 
 
@@ -275,7 +354,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
 
-                String photos_present = row[14];
+                String photos_present = JO.getString("Image");
 
                 if (photos_present.compareTo("yes") == 0) {
 
@@ -295,14 +374,14 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
                 //TODO implement stuff for loading images in the Pin
-                String[] itinerary_string = row[10].split(",");
+                String[] itinerary_string = JO.getString("Itinerary").split(",");
 
                 pinSet.put(number, currentPin);
 
             }
 
-        }
-        catch (IOException ex){
+
+/*        catch (IOException ex){
             throw new RuntimeException("Error in reading CSV file");
         }
         finally {
@@ -314,7 +393,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             }
         }
 
-
+*/
         return pinSet;
 
     }
@@ -451,6 +530,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
 
+        json_string= getIntent().getExtras().getString("json_data");
+        json_itinerary= getIntent().getExtras().getString("json_itinerary");
 
         standard_image_resource_id = getApplicationContext().getResources().getIdentifier("it0square", "drawable", getApplicationContext().getPackageName());
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -468,8 +549,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         layout = (LinearLayout) findViewById(R.id.linear_layout_map);
 
 
-
-        pinSet = pinReader();
+        try {
+            pinSet = pinReader();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         itineraries = itineraryReader();
 
 
@@ -533,7 +617,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         mClusterManager.setRenderer(new PinRenderer(this.getApplicationContext(), mMap, mClusterManager));
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
 
         placeAllPins();
@@ -680,6 +764,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public boolean onClusterClick(Cluster<Pin> cluster) {
         Log.d("marker", "marker cluster pressed");
-        return false;
+        return true; //TODO or false?
     }
 }
