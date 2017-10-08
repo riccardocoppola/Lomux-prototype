@@ -263,7 +263,7 @@ public class PinInfoFragment extends Fragment {
         media_button = (ImageButton) rootView.findViewById(R.id.imagebutton_play);
         back_button = (ImageButton) rootView.findViewById(R.id.imagebutton_back);
         youtube_button = (ImageButton) rootView.findViewById(R.id.imagebutton_youtube);
-
+        spotify_button= (ImageButton) rootView.findViewById(R.id.imagebutton_spotify);
 
         Bundle args = getArguments();
 
@@ -398,12 +398,51 @@ public class PinInfoFragment extends Fragment {
                 }
             });
         }
+            if (hasspotifylink) {
+
+                spotify_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if(isPackageInstalled("com.spotify.music",getContext().getPackageManager()))
+                        {
+                            String spotifyUri = "spotify:album:7rt7AxYexFTtdEqaJPekvX";
+                            for (Link l : mediaLinks)
+                            {
+                                if (l.getText().toLowerCase().equals("spotify"))
+                                {
+                                    spotifyUri = l.getUri();
+                                }
+                            }
+                            Log.d("spotify", spotifyUri);
+                            Intent spotifyIntent = new Intent(Intent.ACTION_VIEW);
+                            spotifyIntent.setPackage("com.spotify.music");
+                            spotifyIntent.setData(Uri.parse(spotifyUri));
+                             startActivity(spotifyIntent);
+                        }
+                        else{
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music"));
+
+                            startActivity(intent);
+                        }
+                    }
+                });
+        }
 
         media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
         back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
 
     }
 
+    private boolean isPackageInstalled(String packagename, PackageManager packageManager) {
+        try {
+            packageManager.getPackageInfo(packagename, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
     public void updatePinView(String arg_name, String arg_subtitle, String arg_firstrow, String arg_secondrow, String arg_info, String sourceName, String arg_formore, int arg_imageid, double arg_lng, double arg_lat, PinType arg_type, ArrayList<Link> media_list) {
 
 

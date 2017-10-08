@@ -175,7 +175,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                 }
 
-
+                Log.d("JSON",jsonArray.toString());
                 String[] pins_string = JO.getString("Pins").split(",");
                 if (pins_string[0].compareTo("-") != 0) {
                     for (String s:pins_string) {
@@ -307,7 +307,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         else if (type.compareTo("M") == 0) pinType = PinType.MONUMENT;
         else pinType = PinType.LOTM;
 
-            String number = JO.getString("ID_ROW");
+            String number = JO.getString("ID_STRING");
             double lat = Double.parseDouble(JO.getString("Lat").replaceAll(",","."));
             double lng = Double.parseDouble(JO.getString("Lon").replaceAll(",","."));
 
