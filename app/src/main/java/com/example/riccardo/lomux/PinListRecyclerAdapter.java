@@ -1,6 +1,7 @@
 package com.example.riccardo.lomux;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -74,6 +77,7 @@ public class PinListRecyclerAdapter extends RecyclerView.Adapter<PinListRecycler
         private TextView holderTextForMore;
         private ImageView holderImage;
         private Button placeInMapButton;
+        View v;
 
         private Pin pin;
 
@@ -89,7 +93,7 @@ public class PinListRecyclerAdapter extends RecyclerView.Adapter<PinListRecycler
             holderImage = (ImageView) v.findViewById(R.id.itinerary_details_pin_layout_imageview);
 
             placeInMapButton = (Button) v.findViewById(R.id.itinerary_details_pin_placeinmapbutton);
-
+           this.v=v;
 
         }
 
@@ -139,7 +143,8 @@ public class PinListRecyclerAdapter extends RecyclerView.Adapter<PinListRecycler
 
 
             if (pin.getImage_reference() != -1 ) {
-                holderImage.setImageResource(pin.getImage_reference());
+                //holderImage.setImageResource(pin.getImage_reference());
+                Picasso.with(v.getContext()).load(pin.getImageUrl()).into(holderImage);
             }
 
             placeInMapButton.setOnClickListener(new View.OnClickListener() {

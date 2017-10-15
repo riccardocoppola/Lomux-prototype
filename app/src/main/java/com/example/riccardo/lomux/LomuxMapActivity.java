@@ -20,6 +20,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +38,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener {
+public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCallback, ClusterManager.OnClusterClickListener<Pin>, ClusterManager.OnClusterItemClickListener<Pin>, GoogleMap.OnMarkerClickListener, GoogleMap.OnMapClickListener, RecyclerAdapter.OnItemClickListener, PinInfoFragment.OnYoutubeClickListener, YoutubeFragment.OnYoutubeBackListener {
 
     private Integer current_textview_id = -1;
 
@@ -46,10 +53,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     private Boolean shownFragment = false;
 
     private String selected_itinerary = "All Pins";
-    private int selected_pin = -1;
+    private String selected_pin = "";
+    private Pin current_pin = null;
 
     private HashMap<Marker, Pin> markerPinHashMap = new HashMap<Marker, Pin>();
-    private HashMap<Integer, Pin> pinSet = null;
+    private HashMap<String, Pin> pinSet = null;
     private TextView pinStuff = null;
 
     private RecyclerView mRecyclerView;
@@ -57,6 +65,56 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     private RecyclerAdapter mAdapter;
 
+    private ClusterManager<Pin> mClusterManager;
+
+    private boolean youtube_over = false;
+    String json_string;
+    String json_itinerary;
+
+    JSONObject jsonObject;
+    JSONArray jsonArray;
+
+
+
+    @Override
+    public void onYoutubeClick() {
+
+
+
+
+
+        YoutubeFragment  yf = new YoutubeFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.lomux_map_fragment_frame, yf, "youtube").commit();
+
+        youtube_over = true;
+
+        ArrayList<Link> current_medialist = current_pin.getMediaList();
+
+        String video_id = "GW3enefjwY0";
+
+        for (Link l:current_medialist) {
+            if (l.getText().toLowerCase().equals("youtube")) {
+                String[] fields = l.getUri().split("=");
+                video_id = fields[fields.length-1];
+            }
+        }
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        yf.setVideoID(video_id);
+
+    }
+
+    @Override
+    public void onYoutubeBack() {
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+
+        youtube_over = false;
+    }
 
     public static int getResId(String resName, Class<?> c) {
 
@@ -70,22 +128,78 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-    private LinkedHashMap<Integer, Itinerary> itineraries = null;
+    private LinkedHashMap<String, Itinerary> itineraries = null;
 
 
-    private LinkedHashMap<Integer, Itinerary> itineraryReader() {
-        LinkedHashMap<Integer, Itinerary> itineraries = new LinkedHashMap<Integer, Itinerary>();
+    private LinkedHashMap<String, Itinerary> itineraryReader() {
+        LinkedHashMap<String, Itinerary> itineraries = new LinkedHashMap<String, Itinerary>();
         InputStream inputStream = getResources().openRawResource(R.raw.lomux_itineraries);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
 
-        Itinerary allpinsitinerary = new Itinerary(0, "All Pins", "All pins of current city", null);
+        Itinerary allpinsitinerary = new Itinerary("0", "All Pins", "All pins of current city", null);
         allpinsitinerary.setImage_reference(getApplicationContext().getResources().getIdentifier("it0square", "drawable", getApplicationContext().getPackageName()));
         allpinsitinerary.setImage_circle_reference(getApplicationContext().getResources().getIdentifier("it0circle", "drawable", getApplicationContext().getPackageName()));
-        itineraries.put(0, allpinsitinerary);
+        itineraries.put("0", allpinsitinerary);
+
+        try {
+            jsonObject = new JSONObject(json_itinerary);
+            jsonArray = jsonObject.getJSONArray("result");
+            String number,name,info;
+
+            int count;
+            for(count=0; count<jsonArray.length();count++)
+            {
+                JSONObject JO=jsonArray.getJSONObject(count);
+                number = JO.getString("Number");
+                name = JO.getString("Name");
+                info = JO.getString("Info");
+                Itinerary currentItinerary = new Itinerary(number, name, info, null);
+
+                String photos_present = JO.getString("Image");
+
+                if (photos_present.compareTo("yes") == 0) {
+
+                    String field_square_image = new String("it" + currentItinerary.getID() + "square");
+                    String field_circle_image = new String("it" + currentItinerary.getID() + "circle");
+
+                    Log.d("string square", field_square_image);
+
+                    int resourceIdsquare = getApplicationContext().getResources().getIdentifier(field_square_image, "drawable", getApplicationContext().getPackageName());
+
+                    int resourceIdcircle = getApplicationContext().getResources().getIdentifier(field_circle_image, "drawable", getApplicationContext().getPackageName());
+                    Log.d("square", String.valueOf(resourceIdcircle));
+
+                    currentItinerary.setImage_reference(resourceIdsquare);
+                    currentItinerary.setImage_circle_reference(resourceIdcircle);
+
+                }
+
+                Log.d("JSON",jsonArray.toString());
+                String[] pins_string = JO.getString("Pins").split(",");
+                if (pins_string[0].compareTo("-") != 0) {
+                    for (String s:pins_string) {
+                        String current_pin = s;
+                        currentItinerary.addPin(pinSet.get(current_pin));
+                        pinSet.get(current_pin).addItinerary(currentItinerary);
+                    }
+                }
 
 
+                itineraries.put(number, currentItinerary);
 
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return itineraries;
+
+    }
+
+/*
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
@@ -97,7 +211,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                 String[] row = csvLine.split(";");
 
-                int number = Integer.parseInt(row[0]);
+                String number = row[0];
                 String name = row[1];
                 String info = row[2];
 
@@ -126,7 +240,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 String[] pins_string = row[4].split(",");
                 if (pins_string[0].compareTo("-") != 0) {
                     for (String s:pins_string) {
-                        int current_pin = Integer.parseInt(s);
+                        String current_pin = s;
                         currentItinerary.addPin(pinSet.get(current_pin));
                         pinSet.get(current_pin).addItinerary(currentItinerary);
                     }
@@ -150,10 +264,10 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
         return itineraries;
     }
-
-    private HashMap<Integer, Pin> pinReader() {
-        HashMap<Integer, Pin> pinSet = new HashMap<Integer, Pin>();
-        InputStream inputStream = getResources().openRawResource(R.raw.lomux_data);
+*/
+    private HashMap<String, Pin> pinReader() throws JSONException {
+        HashMap<String, Pin> pinSet = new HashMap<String, Pin>();
+        /* inputStream = getResources().openRawResource(R.raw.lomux_data);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         Boolean firstRow = true;
 
@@ -175,37 +289,73 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 else if (row[1].compareTo("P") == 0) pinType = PinType.PRIVATE;
                 else if (row[1].compareTo("M") == 0) pinType = PinType.MONUMENT;
                 else pinType = PinType.LOTM;
+*/
+        PinType pinType;
+        jsonObject = new JSONObject(json_string);
+        jsonArray = jsonObject.getJSONArray("result");
+        String type;
+        Log.d("JSON", json_string);
+        int count;
+        for(count=0; count<jsonArray.length();count++)
+        {
+            JSONObject JO=jsonArray.getJSONObject(count);
+            type = JO.getString("Type");
+        if (type.compareTo("V") == 0) pinType = PinType.VENUE;
+        else if (type.compareTo("R") == 0) pinType = PinType.STUDIO;
+        else if (type.compareTo("W") == 0) pinType = PinType.WORK;
+        else if (type.compareTo("P") == 0) pinType = PinType.PRIVATE;
+        else if (type.compareTo("M") == 0) pinType = PinType.MONUMENT;
+        else pinType = PinType.LOTM;
 
-                int number = Integer.parseInt(row[0]);
-                double lat = Double.parseDouble(row[2].replaceAll(",","."));
-                double lng = Double.parseDouble(row[3].replaceAll(",","."));
+            String number = JO.getString("ID_STRING");
+            double lat = Double.parseDouble(JO.getString("Lat").replaceAll(",","."));
+            double lng = Double.parseDouble(JO.getString("Lon").replaceAll(",","."));
 
 
-                for (String s:row) {
-                    Log.d("Elements", s);
-                }
-                Log.d("Pin", String.valueOf(row[11]));
+
                 Pin currentPin = new Pin(number,                              //number
                         pinType,                                                                //pinType
                         lat,
                         lng,
                         //new LatLng(lat, lng),     //lat and long in a new latlong object
-                        row[4],     //name
-                        row[5],     //subtitle
-                        row[6],     //address
-                        row[7],     //zipcode
-                        row[8],     //city
-                        row[9],     //country
-                        row[10],     //info
-                        row[12],    //sourceName
-                        row[13],    //source
-                        //null,       //TODO implement stuff for loading image in this case
-                        row[14],    //artist name
-                        row[15],    //Song title
-                        row[16]     //lyrics
+                        JO.getString("Title"),     //name
+                        JO.getString("Image"),
+                        JO.getString("Subtitle"),     //subtitle
+                        JO.getString("Address"),     //address
+                        JO.getString("ZIP"),     //zipcode
+                        JO.getString("City"),     //city
+                        JO.getString("Country"),     //country
+                        JO.getString("Info"),     //info
+                        JO.getString("SourceName"),    //sourceName
+                        JO.getString("Source"),    //source
+                        JO.getString("Artist"),    //artist name
+                        JO.getString("SongTitle"),    //Song title
+                        JO.getString("Lyrics")     //lyrics
                         );
+                currentPin.setImage_path(getString(R.string.thumbnails_url));
+                // now on row[18] and row[19] we have media type (Youtube, Spotify for now) and their URI
+                // we extract them here
+                try {
+                    Log.d("mediaload", JO.getString("MediaType"));
+                    String[] medias = JO.getString("MediaType").split(",");
+                    String[] mediaUri = JO.getString("MediaURL").split(",");
+                    Log.d("mediaload", String.valueOf(medias.length));
 
-                String photos_present = row[13];
+
+                    for (int ii = 0; ii < medias.length; (ii)++) {
+                        currentPin.addMedia(medias[ii], mediaUri[ii]);
+                        Log.d("mediaload", currentPin.getName() + medias[ii]);
+
+                    }
+                } catch (ArrayIndexOutOfBoundsException ex )
+                {
+                    // no media sources found
+                    Log.d("mediaload", "No media sources available");
+                }
+
+
+
+                String photos_present = JO.getString("Image");
 
                 if (photos_present.compareTo("yes") == 0) {
 
@@ -225,14 +375,14 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
 
                 //TODO implement stuff for loading images in the Pin
-                String[] itinerary_string = row[10].split(",");
+                String[] itinerary_string = JO.getString("Itinerary").split(",");
 
                 pinSet.put(number, currentPin);
 
             }
 
-        }
-        catch (IOException ex){
+
+/*        catch (IOException ex){
             throw new RuntimeException("Error in reading CSV file");
         }
         finally {
@@ -244,44 +394,24 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             }
         }
 
-
+*/
         return pinSet;
 
     }
 
-    private void placePin(int id) {
+    private void placePin(String id) {
         Pin p = pinSet.get(id);
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
-        switch (p.getPintype()) {
-            case VENUE:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_v));
-                break;
-            case STUDIO:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_r));
-                break;
-            case WORK:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_w));
-                break;
-            case PRIVATE:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_p));
-                break;
-            case MONUMENT:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_m));
-                break;
-            default:
-                marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
-        }
-        markerPinHashMap.put(marker, p);
+        mClusterManager.addItem(p);
         //p.setMarker(marker);
         p.setVisible();
     }
 
-    private void removePin(int id) {
+    private void removePin(String id) {
 
         Marker toRemove = null;
 
         for (Map.Entry<Marker, Pin> m: markerPinHashMap.entrySet()) {
-            if (m.getValue().getId() == id) {
+            if (m.getValue().getId().equals(id)) {
                 Log.d("Found pin", m.getValue().getName());
                 toRemove = m.getKey();
                 toRemove.remove();
@@ -294,31 +424,26 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void removeAllPins() {
-
-        Marker toRemove = null;
-
-        for (Map.Entry<Marker, Pin> m: markerPinHashMap.entrySet()) {
-            toRemove = m.getKey();
-            toRemove.remove();
-        }
-
-        markerPinHashMap.clear();
-
+       mClusterManager.clearItems();
     }
 
-    private void placeItineraryPins(int id) {
+    private void placeItineraryPins(String id) {
         Itinerary currentItinerary = itineraries.get(id);
-        HashMap<Integer, Pin> itineraryPins = currentItinerary.getPins();
+        HashMap<String, Pin> itineraryPins = currentItinerary.getPins();
         removeAllPins();
-        for (HashMap.Entry<Integer, Pin> p: itineraryPins.entrySet()) {
+        for (HashMap.Entry<String, Pin> p: itineraryPins.entrySet()) {
             placePin(p.getKey());
         }
     }
 
     private void placeAllPins() {
         removeAllPins();
+        ArrayList<PinType> icons = new ArrayList<>();
         for (Pin p: pinSet.values()) {
-            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
+           // Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(p.getLat(), p.getLng())).title(p.getName()));
+            mClusterManager.addItem(p);
+            icons.add(p.getPintype());
+            /*
             Log.d("PinName", p.getName());
             Log.d("PinType", p.getPintype().toString());
             switch (p.getPintype()) {
@@ -341,7 +466,7 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                     marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_l));
             }
             markerPinHashMap.put(marker, p);
-           // p.setMarker(marker);
+           // p.setMarker(marker);*/
             p.setVisible();
         }
     }
@@ -355,14 +480,15 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
                 final RecyclerAdapter.ItineraryHolder holder = (RecyclerAdapter.ItineraryHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(i));
                 holder.hideItinerary();
             }
-
-            if (itinerary.getID() == 0) {
+            Log.d("itinerary", "Itenerary ID: " + itinerary.getID());
+            if (itinerary.getID().equals("0")) {
                 placeAllPins();
                 selected_itinerary = itinerary.getName();
             } else {
                 placeItineraryPins(itinerary.getID());
                 selected_itinerary = itinerary.getName();
             }
+            mClusterManager.cluster();
             closePinFragment();
 
         }
@@ -392,9 +518,6 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
                 Bundle resultBundle = data.getExtras();
                 Pin resultPin = (Pin) resultBundle.get("pin");
-
-
-
                 placeOnMarker(resultPin);
 
             }
@@ -408,6 +531,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
 
+        json_string= getIntent().getExtras().getString("json_data");
+        json_itinerary= getIntent().getExtras().getString("json_itinerary");
 
         standard_image_resource_id = getApplicationContext().getResources().getIdentifier("it0square", "drawable", getApplicationContext().getPackageName());
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -425,8 +550,11 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         layout = (LinearLayout) findViewById(R.id.linear_layout_map);
 
 
-
-        pinSet = pinReader();
+        try {
+            pinSet = pinReader();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         itineraries = itineraryReader();
 
 
@@ -486,6 +614,13 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.moveCamera(CameraUpdateFactory.newLatLng(london_center));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(camerazoom));
 
+        mClusterManager = new ClusterManager<Pin>(this, mMap);
+        mClusterManager.setRenderer(new PinRenderer(this.getApplicationContext(), mMap, mClusterManager));
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+
         placeAllPins();
 
         //final RecyclerAdapter.ItineraryHolder holder = (RecyclerAdapter.ItineraryHolder) mRecyclerView.getChildViewHolder(mRecyclerView.getChildAt(0));
@@ -500,10 +635,9 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(pin.getLat(), pin.getLng())));
 
         selected_pin = pin.getId();
+        current_pin = pin;
 
         if (pinInfoFragment == null) {
-
-
 
             Bundle args = new Bundle();
             args.putString(PinInfoFragment.ARG_NAME, pin.getName());
@@ -515,6 +649,9 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             args.putString(PinInfoFragment.ARG_SUBTITLE, pin.getSubtitle());
             args.putInt(PinInfoFragment.ARG_IMAGE, pin.getImage_reference());
             args.putString(PinInfoFragment.ARG_TYPE, pin.getPintype().toString());
+            args.putString(PinInfoFragment.ARG_IMAGE_REF, pin.getImageUrl());
+            args.putSerializable(PinInfoFragment.ARG_MEDIALIST, pin.getMediaList());
+
 
             Log.d("stringpin", String.valueOf(pin.getImage_reference()));
 
@@ -525,10 +662,8 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
             pinInfoFragment.setArguments(args);
 
 
-
-
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.lomux_map_fragment_frame, pinInfoFragment).commit();
+                    .add(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
 
             FrameLayout fragment_frame = (FrameLayout) findViewById(R.id.lomux_map_fragment_frame);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
@@ -541,19 +676,62 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         else  if (!shownFragment) {
 
+            if (youtube_over) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+                youtube_over = false;
+            }
+
             FrameLayout fragment_frame = (FrameLayout) findViewById(R.id.lomux_map_fragment_frame);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=1.0f;
             fragment_frame.setLayoutParams(lp);
 
 
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+            pinInfoFragment.updatePinView(pin.getName(),
+                    pin.getSubtitle(),
+                    pin.getAddress(),
+                    pin.getArtist_name(),
+                    pin.getInfo(),
+                    pin.getSource().getText(),
+                    pin.getSource().getUri(),
+                    pin.getImage_reference(),
+                    pin.getLng(),
+                    pin.getLat(),
+                    pin.getPintype(),
+                    pin.getMediaList(),
+                    pin.getImageUrl());
 
             shownFragment = true;
+            pinInfoFragment.reset_buttons();
+
         }
 
         else {
-            pinInfoFragment.updatePinView(pin.getName(), pin.getSubtitle(), pin.getAddress(), pin.getArtist_name(), pin.getInfo(), pin.getSource(), pin.getImage_reference(), pin.getLng(), pin.getLat(), pin.getPintype());
+
+            if (youtube_over) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+
+                youtube_over = false;
+            }
+
+            getSupportFragmentManager().executePendingTransactions();
+
+            pinInfoFragment.updatePinView(pin.getName(),
+                    pin.getSubtitle(),
+                    pin.getAddress(),
+                    pin.getArtist_name(),
+                    pin.getInfo(),
+                    pin.getSource().getText(),
+                    pin.getSource().getUri(),
+                    pin.getImage_reference(),
+                    pin.getLng(),
+                    pin.getLat(),
+                    pin.getPintype(),
+                    pin.getMediaList(),
+                    pin.getImageUrl());
+            pinInfoFragment.reset_buttons();
 
         }
 
@@ -591,9 +769,27 @@ public class LomuxMapActivity extends AppCompatActivity implements OnMapReadyCal
 
         closePinFragment();
 
-        selected_pin = -1;
+        if (youtube_over) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.lomux_map_fragment_frame, pinInfoFragment, "info").commit();
+          youtube_over = false;
+          }
+
+        selected_pin = "";
 
     }
 
 
+    @Override
+    public boolean onClusterItemClick(Pin pin) {
+        Log.d("marker", "marker pressed");
+        placeOnMarker(pin);
+        return true;
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster) {
+        Log.d("marker", "marker cluster pressed");
+        return true; //TODO or false?
+    }
 }
